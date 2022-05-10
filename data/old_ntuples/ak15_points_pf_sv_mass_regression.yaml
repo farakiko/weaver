@@ -19,7 +19,8 @@ selection:
      (fj_Top_munu==1) |
      (fj_Top_taunu==1) |
      (( (fj_H_VV_4q==1) | (fj_H_VV_elenuqq==1) | (fj_H_VV_munuqq==1) | (fj_H_VV_taunuqq==1) ) &
-     (fj_maxdR_HWW_daus<2.0) & (fj_nprongs>1) & (fj_genRes_mass>0) ) )
+     (fj_nprongs>1) & (fj_genRes_mass>0) ) )
+     # (fj_maxdR_HWW_daus<2.0) & (fj_nprongs>1) & (fj_genRes_mass>0) ) )
 
 
 test_time_selection:
@@ -37,7 +38,8 @@ test_time_selection:
      (fj_Top_munu==1) |
      (fj_Top_taunu==1) |
      ( ( (fj_H_VV_4q==1) | (fj_H_VV_elenuqq==1) | (fj_H_VV_munuqq==1) | (fj_H_VV_taunuqq==1) ) &
-     (fj_maxdR_HWW_daus<2.0) & (fj_nprongs>1) & (fj_genRes_mass>0) ))
+     (fj_nprongs>1) & (fj_genRes_mass>0) ))
+     # (fj_maxdR_HWW_daus<2.0) & (fj_nprongs>1) & (fj_genRes_mass>0) ))
 
 new_variables:
    ### [format] name: formula
@@ -149,7 +151,6 @@ observers:
    - fj_Top_elenu
    - fj_Top_munu
    - fj_Top_taunu
-   - fj_Top_elenu
    - fj_H_VV_4q
    - fj_H_VV_elenuqq
    - fj_H_VV_munuqq
