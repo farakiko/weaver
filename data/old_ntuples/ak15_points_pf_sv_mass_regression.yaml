@@ -174,12 +174,14 @@ weights:
    reweight_classes:
        [
        fj_QCD_label,
-       fj_H_VV_4q_3q, fj_H_VV_4q_4q,
+       # fj_H_VV_4q_3q, fj_H_VV_4q_4q,
+       fj_H_VV_4q,
        ]
    class_weights:
        [
        1.0,
-       0.5, 0.5,
+       # 0.5, 0.5,
+       1,
        ]
    #
    # reweight_threshold: 15
