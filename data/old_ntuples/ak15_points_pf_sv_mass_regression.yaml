@@ -46,6 +46,10 @@ new_variables:
    ### can use functions from `math`, `np` (numpy), and `awkward` in the expression
    pfcand_mask: (pfcand_pt_log_nopuppi!=0)
    sv_mask: (sv_pt_log!=0)
+   fj_QCD_label: (fj_isQCDb==1) | (fj_isQCDbb==1) | (fj_isQCDc==1) | (fj_isQCDcc==1) | (fj_isQCDothers==1)
+   fj_H_VV_4q_3q: (fj_H_VV_4q==1) & (fj_nprongs==3)
+   fj_H_VV_4q_4q: (fj_H_VV_4q==1) & (fj_nprongs==4)
+
 
 preprocess:
   ### method: [manual, auto] - whether to use manually specified parameters for variable standardization
@@ -174,14 +178,12 @@ weights:
    reweight_classes:
        [
        fj_QCD_label,
-       # fj_H_VV_4q_3q, fj_H_VV_4q_4q,
-       fj_H_VV_4q,
+       fj_H_VV_4q_3q, fj_H_VV_4q_4q,
        ]
    class_weights:
        [
        1.0,
-       # 0.5, 0.5,
-       1,
+       0.5, 0.5,
        ]
    #
    # reweight_threshold: 15
