@@ -17,7 +17,8 @@ selection:
      (fj_Top_2q == 1) |
      (fj_Top_elenu==1) |
      (fj_Top_munu==1) |
-     (fj_Top_taunu==1) |
+     # (fj_Top_taunu==1) |
+     (fj_Top_taunu==1) )     
      # (( (fj_H_VV_4q==1) | (fj_H_VV_elenuqq==1) | (fj_H_VV_munuqq==1) | (fj_H_VV_taunuqq==1) ) &
      (fj_nprongs>1) & (fj_genRes_mass>0) ) )
      # (fj_maxdR_HWW_daus<2.0) & (fj_nprongs>1) & (fj_genRes_mass>0) ) )
@@ -181,6 +182,6 @@ weights:
        1.0,
        0.5, 0.5,
        ]
-   # 
+   #
    # reweight_threshold: 15
    # reweight_hists:
