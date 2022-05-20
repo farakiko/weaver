@@ -395,7 +395,7 @@ def test_load(args):
     for name, split in split_dict.items():
         files = file_dict.pop(name)
         for i in range((len(files) + split - 1) // split):
-            file_dict[f"{name}_{i}"] = files[i * split : (i + 1) * split]
+            file_dict[f"{name}_{i}"] = files[i * split: (i + 1) * split]
 
     def get_test_loader(name):
         filelist = file_dict[name]
@@ -885,7 +885,7 @@ def main(args):
                     steps_per_epoch=args.steps_per_epoch,
                     grad_scaler=scaler,
                     tb_helper=tb,
-                    l1_lambda=args.l1_lambda,
+                    # l1_lambda=args.l1_lambda,
                 )
             )
             if args.model_prefix:
