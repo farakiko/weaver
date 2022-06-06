@@ -140,7 +140,7 @@ observers:
    - fj_phi
    - fj_mass
    - fj_msoftdrop
-   - fj_lsf3
+   # - fj_lsf3
    - fj_genjetmass
    - fj_genjetmass
    - fj_genRes_mass
