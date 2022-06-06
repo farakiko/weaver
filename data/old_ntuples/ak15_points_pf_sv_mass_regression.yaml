@@ -160,7 +160,7 @@ observers:
    - fj_H_VV_munuqq
    - fj_H_VV_taunuqq
    - fj_nprongs
-   - fj_evt_met_pt
+   # - fj_evt_met_pt
 
 weights:
    ### [option 1] use precomputed weights stored in the input files
