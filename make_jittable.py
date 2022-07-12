@@ -9,7 +9,7 @@ from importlib import import_module
 
 def main(args):
     data_config = SimpleIterDataset([], args.data_config, for_training=False).config
-    data_config.export_json(f"{args.model_prefix}.json") print('jitting the model')
+    data_config.export_json(f"{args.model_prefix}.json")
     print('importing modules')
     network_module = import_module(args.network_config.replace(".py", "").replace("/", "."))
     model, model_info = network_module.get_model(data_config, jittable=True, for_inference=True)
