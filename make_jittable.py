@@ -8,11 +8,15 @@ from importlib import import_module
 
 
 def main(args):
+    print('will set SimpleIterDataset')
     data_config = SimpleIterDataset([], args.data_config, for_training=False).config
+    print('will export to json')
     data_config.export_json(f"{args.model_prefix}.json")
     print('importing modules')
     network_module = import_module(args.network_config.replace(".py", "").replace("/", "."))
+    print('get model')
     model, model_info = network_module.get_model(data_config, jittable=True, for_inference=True)
+    print('load model')
     model.load_state_dict(
         torch.load(f"{args.model_prefix}_best_epoch_state.pt", map_location=torch.device("cpu")),
         strict=False,
@@ -20,6 +24,7 @@ def main(args):
     _ = model.eval()
     print('jitting the model')
     jit_model = torch.jit.script(model)
+    print('saving the model')
     jit_model.save(f"{args.model_prefix}_jitted.pt")
 
 
