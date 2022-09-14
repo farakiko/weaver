@@ -63,7 +63,9 @@ class wrapped_triton:
 
 # model_url = "triton+grpc://ailab01.fnal.gov:8001/particlenet_hww/1"
 # model_url = "triton+grpc://67.58.49.52:8001/particlenet_hww_ul_4q_3q_noqcdlep/3"
-model_url = "triton+grpc://prp-gpu-1.t2.ucsd.edu:8001/particlenet_hww_ul_4q_3q_noqcdlep/3"
+# model_url = "triton+grpc://prp-gpu-1.t2.ucsd.edu:8001/particlenet_hww_ul_4q_3q_noqcdlep/3"
+# model_url = "triton+grpc://prp-gpu-1.t2.ucsd.edu:8001/particlenet_hww_ttbarwjets/1"
+model_url = "triton+grpc://67.58.49.52:8001/particlenet_hww_ttbarwjets/1"
 
 triton_model = wrapped_triton(model_url)
 
