@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hww-fm12
+spec:
+  containers:
+  - name: gpu-container
+    image: gitlab-registry.nrp-nautilus.io/raghsthebest/hww-tagger:latest
+    command: ["/bin/bash", "-c", "git clone https://github.com/farakiko/weaver.git && sleep infinity"]
+    resources:
+      limits:
+        memory: "12Gi"
+        cpu: "1"
+        nvidia.com/gpu: "0"
+        ephemeral-storage: 20Gi
+      requests:
+        memory: 8Gi
+        cpu: "1"
+        nvidia.com/gpu: "0"
+        ephemeral-storage: 10Gi
+    volumeMounts:
+    - mountPath: /hwwtaggervol
+      name: hwwtaggervol
+  volumes:
+    - name: hwwtaggervol
+      persistentVolumeClaim:
+        claimName: hwwtaggervol
+  restartPolicy: Never
+ # affinity:
+ #   nodeAffinity:
+ #     requiredDuringSchedulingIgnoredDuringExecution:
+ #       nodeSelectorTerms:
+ #       - matchExpressions:
+ #         - key: gpu-type
+ #           operator: In
+ #           values:
+ #           - 1080Ti
+
+# python -u -W ignore train.py --data-train "/hwwtaggervol/training/ak8_Apr14/train/QCD*/*.root" "/hwwtaggervol/training/ak8_Mar29/train//Bulk*/*.root" --data-config data/old_ntuples/ak15_points_pf_sv_mass_regression.yaml --network-config networks/particle_net_pf_sv_regression_4layer.py --model-prefix /hwwtaggervol/models/fm/May_10_ak8mod/May_10_ak8mod --num-workers 12 --batch-size 256 --num-epochs 2 --start-lr 3e-3 --optimizer ranger --gpu "0,1" --fetch-step 0.02 | tee /hwwtaggervol/models/fm/May_10_ak8mod/log.txt

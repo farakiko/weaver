@@ -12,35 +12,20 @@ selection:
      (fj_isQCDbb==1) |
      (fj_isQCDc==1) |
      (fj_isQCDcc==1) |
-     # (fj_isQCDlep == 1) |
      (fj_isQCDothers == 1) ) & (fj_genRes_mass<=0) ) |
-     (fj_Top_2q == 1) |
-     (fj_Top_elenu==1) |
-     (fj_Top_munu==1) |
-     (fj_Top_taunu==1) |
-     # (( (fj_H_VV_4q==1) | (fj_H_VV_elenuqq==1) | (fj_H_VV_munuqq==1) | (fj_H_VV_taunuqq==1) ) &
+     ((fj_H_VV_elenuqq==1) | (fj_H_VV_munuqq==1) | (fj_H_VV_taunuqq==1) ) &
      ((fj_nprongs>1) & (fj_genRes_mass>0) ) )
-     # (fj_maxdR_HWW_daus<2.0) & (fj_nprongs>1) & (fj_genRes_mass>0) ) )
 
 new_variables:
     ### [format] name: formula
     ### can use functions from `math`, `np` (numpy), and `awkward` in the expression
     target_mass: np.maximum(1, np.where(fj_genRes_mass>0, fj_genRes_mass, fj_msoftdrop))
     fj_QCD_label: (fj_isQCDb==1) | (fj_isQCDbb==1) | (fj_isQCDc==1) | (fj_isQCDcc==1) | (fj_isQCDothers==1)
-    # fj_QCD_label: ((fj_W_2q==1) | (fj_W_elenu==1) | (fj_W_munu==1) | (fj_W_taunu==1) | (fj_Top_2q==1) | (fj_Top_elenu==1) | (fj_Top_munu==1) | (fj_Top_taunu==1))
     ## ttbar and wjets
-    ## QUESTION:SPLIT INTO PRONGS/SEMIMERGED MERGED???
     fj_ttbar_bmerged: (fj_Top_bmerged==1) & ((fj_Top_2q==1) | (fj_Top_elenu==1) | (fj_Top_munu==1) | (fj_Top_taunu==1))
     fj_ttbar_bsplit: (fj_Top_bmerged!=1) & ((fj_Top_2q==1) | (fj_Top_elenu==1) | (fj_Top_munu==1) | (fj_Top_taunu==1))
     fj_wjets_label: ((fj_W_2q==1) | (fj_W_elenu==1) | (fj_W_munu==1) | (fj_W_taunu==1))
     fj_bkgd_label: ((fj_W_2q==1) | (fj_W_elenu==1) | (fj_W_munu==1) | (fj_W_taunu==1) | (fj_Top_2q==1) | (fj_Top_elenu==1) | (fj_Top_munu==1) | (fj_Top_taunu==1))
-    #FOR PLOTTING QCD
-    # fj_ttbar_bmerged: (fj_QCD_label==1)
-    # fj_ttbar_bsplit: (fj_QCD_label==1)
-    # fj_wjets_label: (fj_QCD_label==1)
-    # fj_bkgd_label: (fj_QCD_label==1)
-    # fj_ttbar_label: ((fj_Top_2q==1) | (fj_Top_elenu==1) | (fj_Top_munu==1) | (fj_Top_taunu==1))
-    # Signal (HVV)
     fj_isHVV_elenuqq_merged: (fj_H_VV_elenuqq==1) & (fj_nprongs==4)
     fj_isHVV_elenuqq_semimerged: (fj_H_VV_elenuqq==1) & (fj_nprongs==3)
     fj_isHVV_munuqq_merged: (fj_H_VV_munuqq==1) & (fj_nprongs==4)
@@ -67,13 +52,6 @@ inputs:
    pf_features:
       length: 100
       vars:
-      ### [format 1]: var_name (no transformation)
-      ### [format 2]: [var_name,
-      ###              subtract_by(optional, default=None, no transf. if preprocess.method=manual, auto transf. if preprocess.method=auto),
-      ###              multiply_by(optional, default=1),
-      ###              clip_min(optional, default=-5),
-      ###              clip_max(optional, default=5),
-      ###              pad_value(optional, default=0)]
          - [pfcand_pt_log_nopuppi, 1, 0.5]
          - [pfcand_e_log_nopuppi, 1.3, 0.5]
          - pfcand_etarel
@@ -141,7 +119,6 @@ observers:
    - fj_phi
    - fj_mass
    - fj_msoftdrop
-   # - fj_lsf3
    - fj_genjetmass
    - fj_genjetmass
    - fj_genRes_mass
@@ -150,18 +127,11 @@ observers:
    - fj_isQCDbb
    - fj_isQCDc
    - fj_isQCDcc
-   # - fj_isQCDlep
    - fj_isQCDothers
-   - fj_Top_2q
-   - fj_Top_elenu
-   - fj_Top_munu
-   - fj_Top_taunu
-   - fj_H_VV_4q
    - fj_H_VV_elenuqq
    - fj_H_VV_munuqq
    - fj_H_VV_taunuqq
    - fj_nprongs
-   # - fj_evt_met_pt
 
 weights:
    ### [option 1] use precomputed weights stored in the input files
@@ -171,7 +141,7 @@ weights:
    use_precomputed_weights: false
    reweight_method: flat
    reweight_vars:
-      fj_pt: [300, 359, 429, 513, 613, 734, 877, 1049, 1254, 1500]
+      fj_pt: [200, 250, 313, 391, 490, 613, 766, 959, 1199, 1500]
       fj_genjetmass: [0, 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, 72, 78, 84, 90, 96, 102, 108, 114, 120, 126, 132, 138, 144, 150, 156, 162, 168, 174, 180, 192, 198, 204, 210, 216, 222, 228, 234, 240, 246, 252, 258]
    # reweight_classes: [fj_isQCDb, fj_isQCDbb, fj_isQCDc, fj_isQCDcc, fj_isQCDothers, fj_H_VV_4q, fj_H_VV_elenuqq, fj_H_VV_munuqq, fj_H_VV_taunuqq]
 ### TO DO: change reweight
