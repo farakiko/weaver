@@ -132,12 +132,9 @@ dmypy.json
 *.auto.yaml
 
 
-*test*.py
 test.py
 *~
 
 *.pkl
 
 .DS_Store
-
-prp/
