@@ -124,16 +124,16 @@ inputs:
 
 labels:
     ### type can be `simple`, `custom`
-    ### [option 1] use `simple` for binary/multi-class classification, then `value` is a list of 0-1 labels
-    #
-    # fj_isHVV_elenuqq_merged, fj_isHVV_elenuqq_semimerged, fj_isHVV_munuqq_merged, fj_isHVV_munuqq_semimerged, fj_isHVV_taunuqq_merged, fj_isHVV_taunuqq_semimerged,
+    ### use `simple` for binary/multi-class classification, then `value` is a list of 0-1 labels
+    # type: simple
+    # value: [
+    #     fj_QCD_label,
+    #     fj_isHVV_elenuqq, fj_isHVV_munuqq, fj_isHVV_taunuqq
+    # ]   # just qcd and 3 signal ele,mu,tau classes... but reweighting just signal vs qcd (2)
 
-    type: simple
-    value: [
-        fj_QCD_label,
-        fj_isHVV_elenuqq, fj_isHVV_munuqq, fj_isHVV_taunuqq
-    ]   # just qcd and 3 signal ele,mu,tau classes... but reweighting just signal vs qcd (2)
-
+   type: custom
+   value:
+      target_mass: np.maximum(1, np.where(fj_genRes_mass>0, fj_genRes_mass, fj_genjetmsd))
 
 observers:
    - fj_pt
