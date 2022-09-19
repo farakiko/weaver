@@ -15,13 +15,13 @@ spec:
         - "-c"
         - >
           git -C /hwwtaggervol/farouk-weaver pull &&
-          mkdir -p /hwwtaggervol/models/fm/Sep_19v2/ &&
+          mkdir -p /hwwtaggervol/models/fm/Sep_19v3/ &&
           cd /opt/repo/weaver &&
           (python -u -W ignore train.py
           --data-train "/hwwtaggervol/training/AK8_Jul21/train/QCD*/*.root" "/hwwtaggervol/training/AK8_Jul21/train//JHU*/*.root"
           --data-config /hwwtaggervol/farouk-weaver/data/old_ntuples/ak8_mass_regression.yaml
           --network-config networks/particle_net_pf_sv_regression_4layer.py
-          --model-prefix /hwwtaggervol/models/fm/Sep_19v2/Sep_19v2
+          --model-prefix /hwwtaggervol/models/fm/Sep_19v3/Sep_19v3
           --num-workers 12
           --batch-size 256
           --num-epochs 4
@@ -30,7 +30,7 @@ spec:
           --gpu "0,1"
           --fetch-step 0.02
           --regression-mode
-          | tee /hwwtaggervol/models/fm/Sep_19v2/log.txt)
+          | tee /hwwtaggervol/models/fm/Sep_19v3/log.txt)
         volumeMounts:
         - mountPath: /hwwtaggervol
           name: hwwtaggervol
