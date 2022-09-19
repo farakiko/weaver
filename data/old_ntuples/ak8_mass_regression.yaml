@@ -13,13 +13,14 @@ selection:
      (fj_isQCDc==1) |
      (fj_isQCDcc==1) |
      (fj_isQCDothers == 1) ) & (fj_genRes_mass<=0) ) |
-     ((fj_H_VV_elenuqq==1) | (fj_H_VV_munuqq==1) | (fj_H_VV_taunuqq==1) ) &
+     ((fj_H_VV_elenuqq==1) | (fj_H_VV_munuqq==1) | (fj_H_VV_leptauelvqq==1) | (fj_H_VV_leptaumuvqq==1) ) &
      ((fj_nprongs>1) & (fj_genRes_mass>0) ) )
 
 new_variables:
     ### [format] name: formula
     ### can use functions from `math`, `np` (numpy), and `awkward` in the expression
     target_mass: np.maximum(1, np.where(fj_genRes_mass>0, fj_genRes_mass, fj_msoftdrop))
+    fj_H_VV_taunuqq: (fj_H_VV_leptauelvqq) | (fj_H_VV_leptaumuvqq)
     fj_QCD_label: (fj_isQCDb==1) | (fj_isQCDbb==1) | (fj_isQCDc==1) | (fj_isQCDcc==1) | (fj_isQCDothers==1)
     fj_sig_label: ((fj_H_VV_elenuqq==1) | (fj_H_VV_munuqq==1) | (fj_H_VV_taunuqq==1))
 
