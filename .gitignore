@@ -138,3 +138,5 @@ test.py
 *.pkl
 
 .DS_Store
+
+binder/rootfiles
