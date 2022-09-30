@@ -121,6 +121,7 @@ observers:
    - fj_nprongs
    - met_relpt
    - met_relphi
+   - fj_H_VV_4q
 
 weights:
    ### [option 1] use precomputed weights stored in the input files
