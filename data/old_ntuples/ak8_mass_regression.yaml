@@ -138,12 +138,12 @@ weights:
    # class_weights: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
    reweight_classes:
        [
-       fj_QCD_label,
+       # fj_QCD_label,
        fj_sig_label,
        ]
    class_weights:
        [
-       1.0,
+       # 1.0,
        1.0,
        ]
    #
