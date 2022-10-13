@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: hww-fm-inference-bulkg 
+  name: hww-fm-inference-jhu 
   labels:
     app: weavertagger
 spec:
@@ -15,42 +15,42 @@ spec:
         - "-c"
         - >
           git -C /hwwtaggervol/farouk-weaver pull &&
-          mkdir -p /hwwtaggervol/inferences/fm/Oct_13_bulkg &&
-          mkdir -p /hwwtaggervol/plots/fm/Oct_13_bulkg &&
+          mkdir -p /hwwtaggervol/inferences/fm/Oct_13_jhu &&
+          mkdir -p /hwwtaggervol/plots/fm/Oct_13_jhu &&
           cd /opt/repo/weaver &&
 
           (python -u plots/plot_losses.py
-          --model-path /hwwtaggervol/models/fm/Oct_10_bulkg/Oct_10_bulkg/
-          --output /hwwtaggervol/plots/fm/Oct_13_bulkg/losses.png
-          | tee -a /hwwtaggervol/plots/fm/Oct_13_bulkg/log.txt) &&
+          --model-path /hwwtaggervol/models/fm/Oct_10_jhu/Oct_10_jhu/
+          --output /hwwtaggervol/plots/fm/Oct_13_jhu/losses.png
+          | tee -a /hwwtaggervol/plots/fm/Oct_13_jhu/log.txt) &&
 
           (python -u train.py
           --predict
-          --predict-output /hwwtaggervol/inferences/fm/Oct_13_bulkg/hww.root
+          --predict-output /hwwtaggervol/inferences/fm/Oct_13_jhu/hww.root
           --data-test '/hwwtaggervol/training/AK8_Sep16/test/GluGluHToWW_Pt-200ToInf_M-125/*.root'
           --data-config /hwwtaggervol/farouk-weaver/data/old_ntuples/ak8_mass_regression.yaml
           --network-config networks/particle_net_pf_sv_regression_4layer.py
-          --model-prefix /hwwtaggervol/models/fm/Oct_10_bulkg/_best_epoch_state.pt
+          --model-prefix /hwwtaggervol/models/fm/Oct_10_jhu/_best_epoch_state.pt
           --gpus "0"
           --batch-size 256
           --fetch-step 0.02
           --num-workers 2
           --regression-mode
-          | tee -a /hwwtaggervol/inferences/fm/Oct_13_bulkg/log_hww.txt) &&
+          | tee -a /hwwtaggervol/inferences/fm/Oct_13_jhu/log_hww.txt) &&
 
           (python -u train.py
           --predict
-          --predict-output /hwwtaggervol/inferences/fm/Oct_13_bulkg/bulkg.root
+          --predict-output /hwwtaggervol/inferences/fm/Oct_13_jhu/jhu.root
           --data-test '/hwwtaggervol/training/AK8_Sep16/test/Bulk*/*.root'
           --data-config /hwwtaggervol/farouk-weaver/data/old_ntuples/ak8_mass_regression.yaml
           --network-config networks/particle_net_pf_sv_regression_4layer.py
-          --model-prefix /hwwtaggervol/models/fm/Oct_10_bulkg/_best_epoch_state.pt
+          --model-prefix /hwwtaggervol/models/fm/Oct_10_jhu/_best_epoch_state.pt
           --gpus "0"
           --batch-size 256
           --fetch-step 0.02
           --num-workers 2
           --regression-mode
-          | tee -a /hwwtaggervol/inferences/fm/Oct_13_bulkg/log_bulkg.txt)
+          | tee -a /hwwtaggervol/inferences/fm/Oct_13_jhu/log_jhu.txt)
 
         volumeMounts:
         - mountPath: /hwwtaggervol
@@ -99,42 +99,42 @@ spec:
 
           # (python -u plots/plot_classification_fromoutput.py
           # --name ParticleNet-PyG-EF
-          # --ifile /hwwtaggervol/inferences/fm/Oct_13_bulkg/qcd.root
-          # --odir /hwwtaggervol/plots/fm/Oct_13_bulkg/
+          # --ifile /hwwtaggervol/inferences/fm/Oct_13_jhu/qcd.root
+          # --odir /hwwtaggervol/plots/fm/Oct_13_jhu/
           # --signals hww_elenuqq_merged,hww_elenuqq_semimerged,hww_munuqq_merged,hww_munuqq_semimerged,hww_taunuqq_merged,hww_taunuqq_semimerged
           # --bkgs qcd1lep,qcd1lep,qcd1lep,qcd1lep,qcd1lep,qcd1lep
           # --mbranch fj_genRes_mass
           # --jet AK8
           # -v
-          # --isig /hwwtaggervol/inferences/fm/Oct_13_bulkg/bulkg.root,/hwwtaggervol/inferences/fm/Oct_13_bulkg/hwwlnuqq.root
-          # --isignames BulkGSMHiggs,SMHiggs
-          # | tee -a /hwwtaggervol/plots/fm/Oct_13_bulkg/log.txt)
+          # --isig /hwwtaggervol/inferences/fm/Oct_13_jhu/jhu.root,/hwwtaggervol/inferences/fm/Oct_13_jhu/hwwlnuqq.root
+          # --isignames jhuSMHiggs,SMHiggs
+          # | tee -a /hwwtaggervol/plots/fm/Oct_13_jhu/log.txt)
 
 
           # (python -u train.py
           # --predict
-          # --predict-output /hwwtaggervol/inferences/fm/Oct_13_bulkg/variableW.root
+          # --predict-output /hwwtaggervol/inferences/fm/Oct_13_jhu/variableW.root
           # --data-test '/hwwtaggervol/training/AK8_Sep16/test/JHUVariableWMass*/*.root'
           # --data-config /hwwtaggervol/farouk-weaver/data/old_ntuples/ak8_mass_regression.yaml
           # --network-config networks/particle_net_pf_sv_regression_4layer.py
-          # --model-prefix /hwwtaggervol/models/fm/Oct_10_bulkg/Oct_10_bulkg_best_epoch_state.pt
+          # --model-prefix /hwwtaggervol/models/fm/Oct_10_jhu/Oct_10_jhu_best_epoch_state.pt
           # --gpus "0"
           # --batch-size 256
           # --fetch-step 0.02
           # --num-workers 2
           # --regression-mode
-          # | tee -a /hwwtaggervol/inferences/fm/Oct_13_bulkg/log_variableW.txt) &&
+          # | tee -a /hwwtaggervol/inferences/fm/Oct_13_jhu/log_variableW.txt) &&
 
           # (python -u train.py
           # --predict
-          # --predict-output /hwwtaggervol/inferences/fm/Oct_13_bulkg/qcd.root
+          # --predict-output /hwwtaggervol/inferences/fm/Oct_13_jhu/qcd.root
           # --data-test '/hwwtaggervol/training/AK8_Sep16/test/QCD*/*.root'
           # --data-config /hwwtaggervol/farouk-weaver/data/old_ntuples/ak8_mass_regression.yaml
           # --network-config networks/particle_net_pf_sv_regression_4layer.py
-          # --model-prefix /hwwtaggervol/models/fm/Oct_10_bulkg/Oct_10_bulkg_best_epoch_state.pt
+          # --model-prefix /hwwtaggervol/models/fm/Oct_10_jhu/Oct_10_jhu_best_epoch_state.pt
           # --gpus "0"
           # --batch-size 256
           # --fetch-step 0.02
           # --num-workers 2
           # --regression-mode
-          # | tee -a /hwwtaggervol/inferences/fm/Oct_13_bulkg/log_qcd.txt)
+          # | tee -a /hwwtaggervol/inferences/fm/Oct_13_jhu/log_qcd.txt)
