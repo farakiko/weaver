@@ -30,7 +30,7 @@ spec:
           --data-test '/hwwtaggervol/training/AK8_Sep16/test/GluGluHToWW_Pt-200ToInf_M-125/*.root'
           --data-config /hwwtaggervol/farouk-weaver/data/old_ntuples/ak8_mass_regression.yaml
           --network-config networks/particle_net_pf_sv_regression_4layer.py
-          --model-prefix /hwwtaggervol/models/fm/Oct_10_bulkg/Oct_10_bulkg_best_epoch_state.pt
+          --model-prefix /hwwtaggervol/models/fm/Oct_10_bulkg/_best_epoch_state.pt
           --gpus "0"
           --batch-size 256
           --fetch-step 0.02
@@ -44,7 +44,7 @@ spec:
           --data-test '/hwwtaggervol/training/AK8_Sep16/test/Bulk*/*.root'
           --data-config /hwwtaggervol/farouk-weaver/data/old_ntuples/ak8_mass_regression.yaml
           --network-config networks/particle_net_pf_sv_regression_4layer.py
-          --model-prefix /hwwtaggervol/models/fm/Oct_10_bulkg/Oct_10_bulkg_best_epoch_state.pt
+          --model-prefix /hwwtaggervol/models/fm/Oct_10_bulkg/_best_epoch_state.pt
           --gpus "0"
           --batch-size 256
           --fetch-step 0.02
