@@ -3,9 +3,9 @@ import math
 import numpy as np
 import torch
 from torch import Tensor
+from utils.nn.model.ParticleNet import ParticleNetTagger
 
-# from utils.nn.model.ParticleNet import ParticleNetTagger
-from utils.nn.model.ParticleNetPyg_met import ParticleNetTaggerPyG as ParticleNetTagger
+# from utils.nn.model.ParticleNetPyg_met import ParticleNetTaggerPyG as ParticleNetTagger
 
 
 def get_model(data_config, **kwargs):
