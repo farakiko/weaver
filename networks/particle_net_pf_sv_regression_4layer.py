@@ -1,10 +1,11 @@
-import torch
-from utils.nn.model.ParticleNet import ParticleNetTagger
+import math
 
 import numpy as np
-import math
 import torch
 from torch import Tensor
+
+# from utils.nn.model.ParticleNet import ParticleNetTagger
+from utils.nn.model.ParticleNetPyg_met import ParticleNetTaggerPyG as ParticleNetTagger
 
 
 def get_model(data_config, **kwargs):
@@ -18,34 +19,48 @@ def get_model(data_config, **kwargs):
     fc_params = [(256, 0.1)]
     use_fusion = True
 
-    pf_features_dims = len(data_config.input_dicts['pf_features'])
-    sv_features_dims = len(data_config.input_dicts['sv_features'])
+    pf_features_dims = len(data_config.input_dicts["pf_features"])
+    sv_features_dims = len(data_config.input_dicts["sv_features"])
     num_classes = len(data_config.label_value)
-    model = ParticleNetTagger(pf_features_dims, sv_features_dims, num_classes,
-                              conv_params, fc_params,
-                              use_fusion=use_fusion,
-                              use_fts_bn=kwargs.get('use_fts_bn', False),
-                              use_counts=kwargs.get('use_counts', True),
-                              pf_input_dropout=kwargs.get('pf_input_dropout', None),
-                              sv_input_dropout=kwargs.get('sv_input_dropout', None),
-                              for_inference=kwargs.get('for_inference', False)
-                              )
+    model = ParticleNetTagger(
+        pf_features_dims,
+        sv_features_dims,
+        num_classes,
+        conv_params,
+        fc_params,
+        use_fusion=use_fusion,
+        use_fts_bn=kwargs.get("use_fts_bn", False),
+        use_counts=kwargs.get("use_counts", True),
+        pf_input_dropout=kwargs.get("pf_input_dropout", None),
+        sv_input_dropout=kwargs.get("sv_input_dropout", None),
+        for_inference=kwargs.get("for_inference", False),
+    )
 
     model_info = {
-        'input_names': list(data_config.input_names),
-        'input_shapes': {k: ((1,) + s[1:]) for k, s in data_config.input_shapes.items()},
-        'output_names': ['softmax'],
-        'dynamic_axes': {**{k: {0: 'N', 2: 'n_' + k.split('_')[0]} for k in data_config.input_names},
-                         **{'softmax': {0: 'N'}}},
+        "input_names": list(data_config.input_names),
+        "input_shapes": {
+            k: ((1,) + s[1:]) for k, s in data_config.input_shapes.items()
+        },
+        "output_names": ["softmax"],
+        "dynamic_axes": {
+            **{k: {0: "N", 2: "n_" + k.split("_")[0]} for k in data_config.input_names},
+            **{"softmax": {0: "N"}},
+        },
     }
 
     return model, model_info
 
 
 class RatioSmoothL1Loss(torch.nn.SmoothL1Loss):
-    __constants__ = ['reduction']
+    __constants__ = ["reduction"]
 
-    def __init__(self, reduction: str = 'mean', beta: float = 1.0, cutoff: float = 1.0, sine_weight_max: float = None) -> None:
+    def __init__(
+        self,
+        reduction: str = "mean",
+        beta: float = 1.0,
+        cutoff: float = 1.0,
+        sine_weight_max: float = None,
+    ) -> None:
         super(RatioSmoothL1Loss, self).__init__(None, None, reduction)
         self.beta = beta
         self.cutoff = cutoff
@@ -55,25 +70,45 @@ class RatioSmoothL1Loss(torch.nn.SmoothL1Loss):
         label = torch.maximum(target, self.cutoff * torch.ones_like(target))
         if self.sine_weight_max is None:
             return torch.nn.functional.smooth_l1_loss(
-                input / label, torch.ones_like(target), reduction=self.reduction, beta=self.beta)
+                input / label,
+                torch.ones_like(target),
+                reduction=self.reduction,
+                beta=self.beta,
+            )
         else:
             wgt = torch.sin(
-                np.pi / (2 * self.sine_weight_max) * torch.clip(label, self.cutoff, self.sine_weight_max))
-            loss = torch.nn.functional.smooth_l1_loss(
-                input / label, torch.ones_like(target), reduction='none', beta=self.beta) * wgt
+                np.pi
+                / (2 * self.sine_weight_max)
+                * torch.clip(label, self.cutoff, self.sine_weight_max)
+            )
+            loss = (
+                torch.nn.functional.smooth_l1_loss(
+                    input / label,
+                    torch.ones_like(target),
+                    reduction="none",
+                    beta=self.beta,
+                )
+                * wgt
+            )
             # print(list(zip(label, wgt, loss)))
-            if self.reduction == 'none':
+            if self.reduction == "none":
                 return loss
-            elif self.reduction == 'mean':
+            elif self.reduction == "mean":
                 return loss.mean()
-            elif self.reduction == 'sum':
+            elif self.reduction == "sum":
                 return loss.sum()
 
 
 class SymmetricRatioSmoothL1Loss(torch.nn.SmoothL1Loss):
-    __constants__ = ['reduction']
+    __constants__ = ["reduction"]
 
-    def __init__(self, reduction: str = 'mean', beta: float = 1.0, cutoff: float = 1.0, sine_weight_max: float = None) -> None:
+    def __init__(
+        self,
+        reduction: str = "mean",
+        beta: float = 1.0,
+        cutoff: float = 1.0,
+        sine_weight_max: float = None,
+    ) -> None:
         super(SymmetricRatioSmoothL1Loss, self).__init__(None, None, reduction)
         self.beta = beta
         self.cutoff = cutoff
@@ -84,47 +119,68 @@ class SymmetricRatioSmoothL1Loss(torch.nn.SmoothL1Loss):
         pred = torch.maximum(input, self.cutoff * torch.ones_like(input))
         if self.sine_weight_max is None:
             return torch.nn.functional.smooth_l1_loss(
-                pred / label, torch.ones_like(target), reduction=self.reduction, beta=self.beta) + torch.nn.functional.smooth_l1_loss(
-                label / pred, torch.ones_like(target), reduction=self.reduction, beta=self.beta)
+                pred / label,
+                torch.ones_like(target),
+                reduction=self.reduction,
+                beta=self.beta,
+            ) + torch.nn.functional.smooth_l1_loss(
+                label / pred,
+                torch.ones_like(target),
+                reduction=self.reduction,
+                beta=self.beta,
+            )
         else:
             wgt = torch.sin(
-                np.pi / (2 * self.sine_weight_max) * torch.clip(label, self.cutoff, self.sine_weight_max))
+                np.pi
+                / (2 * self.sine_weight_max)
+                * torch.clip(label, self.cutoff, self.sine_weight_max)
+            )
             loss = torch.nn.functional.smooth_l1_loss(
-                pred / label, torch.ones_like(target), reduction='none', beta=self.beta) + torch.nn.functional.smooth_l1_loss(
-                label / pred, torch.ones_like(target), reduction='none', beta=self.beta)
+                pred / label, torch.ones_like(target), reduction="none", beta=self.beta
+            ) + torch.nn.functional.smooth_l1_loss(
+                label / pred, torch.ones_like(target), reduction="none", beta=self.beta
+            )
             loss *= wgt
             # print(list(zip(label, wgt, loss)))
-            if self.reduction == 'none':
+            if self.reduction == "none":
                 return loss
-            elif self.reduction == 'mean':
+            elif self.reduction == "mean":
                 return loss.mean()
-            elif self.reduction == 'sum':
+            elif self.reduction == "sum":
                 return loss.sum()
 
 
 class LogCoshLoss(torch.nn.L1Loss):
-    __constants__ = ['reduction']
+    __constants__ = ["reduction"]
 
-    def __init__(self, reduction: str = 'mean') -> None:
+    def __init__(self, reduction: str = "mean") -> None:
         super(LogCoshLoss, self).__init__(None, None, reduction)
 
     def forward(self, input: Tensor, target: Tensor) -> Tensor:
         x = input - target
-        loss = x + torch.nn.functional.softplus(-2. * x) - math.log(2)
-        if self.reduction == 'none':
+        loss = x + torch.nn.functional.softplus(-2.0 * x) - math.log(2)
+        if self.reduction == "none":
             return loss
-        elif self.reduction == 'mean':
+        elif self.reduction == "mean":
             return loss.mean()
-        elif self.reduction == 'sum':
+        elif self.reduction == "sum":
             return loss.sum()
 
 
 def get_loss(data_config, **kwargs):
-    if kwargs.get('loss_mode', 3) == 1:
-        return RatioSmoothL1Loss(beta=kwargs.get('loss_beta', 0.3), cutoff=kwargs.get('loss_cutoff', 1), sine_weight_max=kwargs.get('loss_sine_weight_max', None))
-    elif kwargs.get('loss_mode', 3) == 2:
-        return SymmetricRatioSmoothL1Loss(beta=kwargs.get('loss_beta', 0.3), cutoff=kwargs.get('loss_cutoff', 1), sine_weight_max=kwargs.get('loss_sine_weight_max', None))
-    elif kwargs.get('loss_mode', 3) == 3:
+    if kwargs.get("loss_mode", 3) == 1:
+        return RatioSmoothL1Loss(
+            beta=kwargs.get("loss_beta", 0.3),
+            cutoff=kwargs.get("loss_cutoff", 1),
+            sine_weight_max=kwargs.get("loss_sine_weight_max", None),
+        )
+    elif kwargs.get("loss_mode", 3) == 2:
+        return SymmetricRatioSmoothL1Loss(
+            beta=kwargs.get("loss_beta", 0.3),
+            cutoff=kwargs.get("loss_cutoff", 1),
+            sine_weight_max=kwargs.get("loss_sine_weight_max", None),
+        )
+    elif kwargs.get("loss_mode", 3) == 3:
         return LogCoshLoss()
     else:
-        return torch.nn.SmoothL1Loss(beta=kwargs.get('loss_beta', 10))
+        return torch.nn.SmoothL1Loss(beta=kwargs.get("loss_beta", 10))
