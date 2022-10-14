@@ -82,8 +82,10 @@ class EdgeConvBlock(nn.Module):
         self.k = k
         self.batch_norm = batch_norm
         self.activation = activation
+        print(out_feats)
         try:  # assuming dim=1 for MET is the issue
             self.num_layers = len(out_feats)
+            print(self.num_layers)
         except:
             self.num_layers = 1
             out_feats = [out_feats]
