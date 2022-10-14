@@ -85,7 +85,7 @@ class EdgeConvBlock(nn.Module):
         try:  # assuming dim=1 for MET is the issue
             self.num_layers = len(out_feats)
         except:
-            self.num_layers = [out_feats]
+            self.num_layers = 1
         self.get_graph_feature = (
             get_graph_feature_v2 if cpu_mode else get_graph_feature_v1
         )
