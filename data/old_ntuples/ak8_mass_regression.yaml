@@ -86,6 +86,22 @@ inputs:
       length: 7
       vars:
          - sv_mask
+         
+   # adding met nodes to the graph
+    met_points:
+        length: 1
+        vars:
+        - met_relphi
+    met_features:
+        length: 1
+        vars:
+      #   - [met_relpt, 1, 0.5]
+        - met_relpt
+        - met_relphi
+    el_mask:
+        length: 1
+        vars:
+        - met_mask
 
 labels:
     ### type can be `simple`, `custom`
