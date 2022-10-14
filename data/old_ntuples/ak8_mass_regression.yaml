@@ -86,7 +86,19 @@ inputs:
       length: 7
       vars:
          - sv_mask
-         
+    met_points:
+      length: 1
+      vars:
+        - met_relphi
+    met_features:
+        length: 1
+        vars:
+        - [met_relp, 1, 0.5]
+        - met_relphi
+    el_mask:
+        length: 1
+        vars:
+        - met_mask         
 labels:
     ### type can be `simple`, `custom`
     ### use `simple` for binary/multi-class classification, then `value` is a list of 0-1 labels
