@@ -3,7 +3,7 @@ import math
 import numpy as np
 import torch
 from torch import Tensor
-from utils.nn.model.ParticleNetPygMET import ParticleNetTaggerPyG as ParticleNetTagger
+from utils.nn.model.ParticleNetPyGMET import ParticleNetTaggerPyG as ParticleNetTagger
 
 # from utils.nn.model.ParticleNet import ParticleNetTagger
 
