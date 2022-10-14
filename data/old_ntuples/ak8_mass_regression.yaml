@@ -90,14 +90,14 @@ inputs:
       length: 1
       vars:
         - met_relphi
-    met_features:
-        length: 1
-        vars:
+   met_features:
+      length: 1
+      vars:
         - [met_relp, 1, 0.5]
         - met_relphi
-    el_mask:
-        length: 1
-        vars:
+   el_mask:
+      length: 1
+      vars:
         - met_mask         
 labels:
     ### type can be `simple`, `custom`
