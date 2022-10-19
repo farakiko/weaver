@@ -1,10 +1,11 @@
-import numpy as np
 import math
+
+import numpy as np
 import torch
 from torch import Tensor
+from utils.nn.model.ParticleNet import ParticleNetTagger
 
-# from utils.nn.model.ParticleNet import ParticleNetTagger
-from weaver.nn.model.ParticleNet import ParticleNetTagger
+# from weaver.nn.model.ParticleNet import ParticleNetTagger
 
 
 def get_model(data_config, **kwargs):
