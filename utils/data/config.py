@@ -1,6 +1,7 @@
+import copy
+
 import numpy as np
 import yaml
-import copy
 
 from ..logger import _logger
 from .tools import _get_variable_names
@@ -59,15 +60,21 @@ class DataConfig(object):
 
         self.selection = opts["selection"]
         self.test_time_selection = (
-            opts["test_time_selection"] if opts["test_time_selection"] else self.selection
+            opts["test_time_selection"]
+            if opts["test_time_selection"]
+            else self.selection
         )
         self.var_funcs = opts["new_variables"]
         # preprocessing config
         self.preprocess = opts["preprocess"]
-        self._auto_standardization = opts["preprocess"]["method"].lower().startswith("auto")
+        self._auto_standardization = (
+            opts["preprocess"]["method"].lower().startswith("auto")
+        )
         self._missing_standardization_info = False
         self.preprocess_params = (
-            opts["preprocess"]["params"] if opts["preprocess"]["params"] is not None else {}
+            opts["preprocess"]["params"]
+            if opts["preprocess"]["params"] is not None
+            else {}
         )
 
         # inputs
@@ -91,13 +98,18 @@ class DataConfig(object):
                     params = {
                         "length": o["length"],
                         "pad_mode": o.get("pad_mode", "constant").lower(),
-                        "center": _get(1, "auto" if self._auto_standardization else None),
+                        "center": _get(
+                            1, "auto" if self._auto_standardization else None
+                        ),
                         "scale": _get(2, 1),
                         "min": _get(3, -5),
                         "max": _get(4, 5),
                         "pad_value": _get(5, 0),
                     }
-                    if v[0] in self.preprocess_params and params != self.preprocess_params[v[0]]:
+                    if (
+                        v[0] in self.preprocess_params
+                        and params != self.preprocess_params[v[0]]
+                    ):
                         raise RuntimeError(
                             "Incompatible info for variable %s, had: \n  %s\nnow got:\n  %s"
                             % (v[0], str(self.preprocess_params[k]), str(params))
@@ -152,6 +164,7 @@ class DataConfig(object):
                 ",".join(self.label_value)
             )
         else:
+            print("self.label_value.keys()", self.label_value.keys())
             self.label_names = tuple(self.label_value.keys())
             self.var_funcs.update(self.label_value)
         # weights: TODO
@@ -160,7 +173,9 @@ class DataConfig(object):
             self.weight_name = "weight_"
             self.use_precomputed_weights = opts["weights"]["use_precomputed_weights"]
             if self.use_precomputed_weights:
-                self.var_funcs[self.weight_name] = "*".join(opts["weights"]["weight_branches"])
+                self.var_funcs[self.weight_name] = "*".join(
+                    opts["weights"]["weight_branches"]
+                )
             else:
                 self.reweight_method = opts["weights"]["reweight_method"]
                 self.reweight_branches = tuple(opts["weights"]["reweight_vars"].keys())
@@ -183,7 +198,9 @@ class DataConfig(object):
         self.monitor_variables = tuple(opts["monitor_variables"])
         # Z variables: returned as `Z` in the dataloader (use monitor_variables for training, observers for eval)
         self.z_variables = (
-            self.observer_names if len(self.observer_names) > 0 else self.monitor_variables
+            self.observer_names
+            if len(self.observer_names) > 0
+            else self.monitor_variables
         )
 
         # remove self mapping from var_funcs
@@ -192,25 +209,47 @@ class DataConfig(object):
                 del self.var_funcs[k]
 
         if print_info:
+
             def _log(msg, *args, **kwargs):
-                _logger.info(msg, *args, color='lightgray', **kwargs)
-            _log('preprocess config: %s', str(self.preprocess))
-            _log('selection: %s', str(self.selection))
-            _log('test_time_selection: %s', str(self.test_time_selection))
-            _log('var_funcs:\n - %s', '\n - '.join(str(it) for it in self.var_funcs.items()))
-            _log('input_names: %s', str(self.input_names))
-            _log('input_dicts:\n - %s', '\n - '.join(str(it) for it in self.input_dicts.items()))
-            _log('input_shapes:\n - %s', '\n - '.join(str(it) for it in self.input_shapes.items()))
-            _log('preprocess_params:\n - %s', '\n - '.join(str(it) for it in self.preprocess_params.items()))
-            _log('label_names: %s', str(self.label_names))
-            _log('observer_names: %s', str(self.observer_names))
-            _log('monitor_variables: %s', str(self.monitor_variables))
-            if opts['weights'] is not None:
+                _logger.info(msg, *args, color="lightgray", **kwargs)
+
+            _log("preprocess config: %s", str(self.preprocess))
+            _log("selection: %s", str(self.selection))
+            _log("test_time_selection: %s", str(self.test_time_selection))
+            _log(
+                "var_funcs:\n - %s",
+                "\n - ".join(str(it) for it in self.var_funcs.items()),
+            )
+            _log("input_names: %s", str(self.input_names))
+            _log(
+                "input_dicts:\n - %s",
+                "\n - ".join(str(it) for it in self.input_dicts.items()),
+            )
+            _log(
+                "input_shapes:\n - %s",
+                "\n - ".join(str(it) for it in self.input_shapes.items()),
+            )
+            _log(
+                "preprocess_params:\n - %s",
+                "\n - ".join(str(it) for it in self.preprocess_params.items()),
+            )
+            _log("label_names: %s", str(self.label_names))
+            _log("observer_names: %s", str(self.observer_names))
+            _log("monitor_variables: %s", str(self.monitor_variables))
+            if opts["weights"] is not None:
                 if self.use_precomputed_weights:
-                    _log('weight: %s' % self.var_funcs[self.weight_name])
+                    _log("weight: %s" % self.var_funcs[self.weight_name])
                 else:
-                    for k in ['reweight_method', 'reweight_branches', 'reweight_bins', 'reweight_classes', 'class_weights', 'reweight_threshold', 'reweight_discard_under_overflow']:
-                        _log('%s: %s' % (k, getattr(self, k)))
+                    for k in [
+                        "reweight_method",
+                        "reweight_branches",
+                        "reweight_bins",
+                        "reweight_classes",
+                        "class_weights",
+                        "reweight_threshold",
+                        "reweight_discard_under_overflow",
+                    ]:
+                        _log("%s: %s" % (k, getattr(self, k)))
 
         # parse config
         self.keep_branches = set()
