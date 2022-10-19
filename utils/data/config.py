@@ -165,7 +165,8 @@ class DataConfig(object):
             )
         else:
             print("self.label_value", self.label_value)
-            self.label_names = tuple(self.label_value.keys())
+            # self.label_names = tuple(self.label_value.keys())
+            self.label_names = self.label_value
             self.var_funcs.update(self.label_value)
         # weights: TODO
         self.weight_name = None
