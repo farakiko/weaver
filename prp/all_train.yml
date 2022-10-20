@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: hww-fm-jit
+  name: hww-fm-train-bulkg
   labels:
     app: weavertagger
 spec:
@@ -14,12 +14,23 @@ spec:
         - "/bin/bash"
         - "-c"
         - >
-          git clone https://github.com/farakiko/weaver.git &&
-          cd weaver &&
-          python make_jittable.py
-          --data-config /hwwtaggervol/farouk-weaver/data/old_ntuples/ak8_MD_vminclv2_pre2.yml
-          -n networks/particle_net_pf_sv_hybrid.py
-          -m /hwwtaggervol/models/fm/congqiao_net/congqiao_net/
+          git -C /hwwtaggervol/farouk-weaver pull &&
+          mkdir -p /hwwtaggervol/models/fm/Sep_30_bulkg/ &&
+          cd /opt/repo/weaver &&
+          (python -u -W ignore train.py
+          --data-train "/hwwtaggervol/training/AK8_Sep16/train/QCD*/*.root" "/hwwtaggervol/training/AK8_Sep16/train/JHU*/*.root"
+          --data-config /hwwtaggervol/farouk-weaver/data/old_ntuples/ak8_mass_regression.yaml
+          --network-config networks/particle_net_pf_sv_regression_4layer.py
+          --model-prefix /hwwtaggervol/models/fm/Sep_30_bulkg/
+          --num-workers 12
+          --batch-size 256
+          --num-epochs 40
+          --start-lr 3e-3
+          --optimizer ranger
+          --gpu "0,1"
+          --fetch-step 0.02
+          --regression-mode
+          | tee /hwwtaggervol/models/fm/Sep_30_bulkg/log.txt)
         volumeMounts:
         - mountPath: /hwwtaggervol
           name: hwwtaggervol
@@ -27,12 +38,12 @@ spec:
           mountPath: /opt/repo
         resources:
           limits:
-            memory: 64Gi
+            memory: 140Gi
             cpu: "8"
             nvidia.com/gpu: "2"
           requests:
-            memory: 12Gi
-            cpu: "2"
+            memory: 128Gi
+            cpu: "6"
             nvidia.com/gpu: "2"
       initContainers:
       - name: init-clone-repo
@@ -73,5 +84,3 @@ spec:
         #     memory: 128Gi
         #     cpu: "6"
         #     nvidia.com/gpu: "2"
-
-  # python make_jittable.py --data-config /hwwtaggervol/farouk-weaver/data/old_ntuples/ak8_MD_vminclv2_pre2.yml -n networks/particle_net_pf_sv_hybrid.py -m /hwwtaggervol/models/fm/congqiao_net/congqiao_net
