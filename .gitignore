@@ -140,3 +140,4 @@ test.py
 .DS_Store
 
 binder/rootfiles
+binder/inference_plots
